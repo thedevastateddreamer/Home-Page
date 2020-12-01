@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:home_page/login.dart';
 
-class MainDrawer extends StatelessWidget {
+class Bigdrawer extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+    return MainDrawer();
+  }
+}
+class MainDrawer extends State<Bigdrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -16,7 +23,7 @@ class MainDrawer extends StatelessWidget {
                   child: ClipOval(
                     child: Image.network(
                       "https://lh3.googleusercontent.com/fr7iBUCXzCLWmMa0bU6FOOBGxbL9h6TinmtdByeJmgfEBkQ0LU5eGw7gt0p6CJMNpi92",
-                      width: 130,
+                      width: 100,
                       height: 130,
                       fit: BoxFit.cover,
                     ),
@@ -94,18 +101,30 @@ class MainDrawer extends StatelessWidget {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.pop(context);
+
               },
             ),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Settings'),
               onTap: () {
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context){
+                    return Bigclass();
+                  }
+                  )
+                  );
+                  //setState(() {
+                  //if(_formKey.currentState.validate())
+                  //alertMessage(mno);
+
+
+                  //});
+                }
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.pop(context);
-              },
+                // Navigator.pop(context);
             ),
           ],
         ));
