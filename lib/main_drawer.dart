@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_page/login.dart';
+import 'auth.dart';
+import 'authenticate.dart';
 
 class Bigdrawer extends StatefulWidget{
   @override
@@ -81,18 +84,32 @@ class MainDrawer extends State<Bigdrawer> {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.pop(context);
+               // Navigator.push(context, MaterialPageRoute(builder: (context)=> Login2()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.format_align_justify),
-              title: Text('Register Your Business'),
+              leading: Icon(Icons.edit),
+              title: Text('Register Yourself'),
               onTap: () {
                 // Update the state of the app
                 // ...
                 // Then close the drawer
-                Navigator.pop(context);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Auth()
+                )
+                );
+               // Navigator.push(context, MaterialPageRoute(builder: (context){
+                //  return Bigclass();
+                //}
+                //)
+                //);
               },
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Sign Out'),
+              onTap: () {
+                     FirebaseAuth.instance.signOut();
+                },
             ),
             ListTile(
               leading: Icon(Icons.phone),
@@ -109,11 +126,11 @@ class MainDrawer extends State<Bigdrawer> {
               title: Text('Settings'),
               onTap: () {
 
-                  Navigator.push(context, MaterialPageRoute(builder: (context){
-                    return Bigclass();
-                  }
-                  )
-                  );
+                  //Navigator.push(context, MaterialPageRoute(builder: (context){
+                   // return Bigclass();
+                 // }
+                  //)
+                  //);
                   //setState(() {
                   //if(_formKey.currentState.validate())
                   //alertMessage(mno);
