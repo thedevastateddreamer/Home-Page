@@ -1,8 +1,15 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:home_page/login.dart';
+import 'Settingss.dart';
 import 'auth.dart';
-import 'authenticate.dart';
+import 'package:http/http.dart' as http;
+import  'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:home_page/providers/token.dart';
+
+
+
 
 class Bigdrawer extends StatefulWidget{
   @override
@@ -11,8 +18,13 @@ class Bigdrawer extends StatefulWidget{
   }
 }
 class MainDrawer extends State<Bigdrawer> {
+
   @override
+  String greetings = '';
+  dynamic ans;
+  String a ='';
   Widget build(BuildContext context) {
+    Token token = Provider.of<Token>(context);
     return Drawer(
         child: ListView(
           // Important: Remove any padding from the ListView.
@@ -78,14 +90,21 @@ class MainDrawer extends State<Bigdrawer> {
               ],
             ),
             ListTile(
-              leading: Icon(Icons.check_circle_outline),
-              title: Text('Check Status'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-               // Navigator.push(context, MaterialPageRoute(builder: (context)=> Login2()));
-              },
+              leading: Icon(Icons.add_circle_outline),
+              title: Text('Book now'),
+
+                onTap: () async{
+                  token.updateToken(token.tokenNo + 1);
+                  final response = await http.get('http://127.0.0.1:5000/'); //getting the response from our backend server script
+                  final decoded = json.decode(response.body) as Map<String, dynamic>; //converting it from json to key value pair
+
+                  a = decoded.toString();
+                  print(a);
+                  setState(() {
+                   greetings = 'Your ticket has been booked!';
+                    //greetings = decoded['greetings']; //changing the state of our widget on data update
+                  });
+                },
             ),
             ListTile(
               leading: Icon(Icons.edit),
@@ -112,36 +131,33 @@ class MainDrawer extends State<Bigdrawer> {
                 },
             ),
             ListTile(
-              leading: Icon(Icons.phone),
-              title: Text('Contact Us'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.settings),
               title: Text('Settings'),
               onTap: () {
-
-                  //Navigator.push(context, MaterialPageRoute(builder: (context){
-                   // return Bigclass();
-                 // }
-                  //)
-                  //);
-                  //setState(() {
-                  //if(_formKey.currentState.validate())
-                  //alertMessage(mno);
-
-
-                  //});
+                  Navigator.push(context, MaterialPageRoute(builder: (context){
+                    return SettingsOnePage();
+                  }
+                  )
+                  );
                 }
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                // Navigator.pop(context);
+            ),
+            ListTile(
+              leading: Icon(Icons.check_circle_outline),
+              title: Text(greetings),
+              onTap: () {
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.add_alert),
+              title: Text('Add more people in the Queue?'),
+              onTap: () async{
+                Timer.periodic(new Duration(seconds: 10), (timer) async {
+                  print('Success!');
+                  if(token.tokenNo > 0){
+                    token.updateToken(token.tokenNo - 1);
+                  }
+                });
+              },
             ),
           ],
         ));

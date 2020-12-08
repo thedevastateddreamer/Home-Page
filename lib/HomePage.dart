@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:home_page/main_drawer.dart';
+import 'booking.dart';
+import 'package:provider/provider.dart';
+import 'package:home_page/providers/token.dart';
+
 
 
 class Home extends StatefulWidget {
@@ -11,19 +16,41 @@ class Home extends StatefulWidget {
   }
 }
 class _HomeState extends State<Home> {
+
+  bool _dark;
+  @override
+  void initState() {
+    super.initState();
+    _dark = false;
+  }
+
+  Brightness _getBrightness() {
+    return _dark ? Brightness.dark : Brightness.light;
+  }
+
   List imageLinks = ["images/carousel1.jpg", "images/2.jpg", "images/3.jpg", "images/4.png", "images/5.jpeg", "images/6.jpg"];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    Token token = Provider.of<Token>(context);
+    return Theme(
+        isMaterialAppTheme: true,
+        data: ThemeData(
+        brightness: _getBrightness(),
+        ),
+    child: Scaffold(
+      backgroundColor: _dark ? null : Colors.grey.shade200,
       drawer: Bigdrawer(),
       appBar: AppBar(
+          elevation: 0,
+          brightness: _getBrightness(),
+          iconTheme: IconThemeData(color: _dark ? Colors.white : Colors.black),
           title: Text('NoQ - eliminating queues',
               style: TextStyle(
                 letterSpacing: 2.0,
                 fontFamily: 'Roboto Condensed',
               )),
           centerTitle: true,
-          backgroundColor: Colors.indigo[200]),
+          backgroundColor: Colors.deepPurple[300]),
       body: Container(
         margin: EdgeInsets.all(20),
         child: Column(
@@ -85,7 +112,12 @@ class _HomeState extends State<Home> {
             Container(
               width: 250,
               child: RaisedButton(
-                onPressed: () {},
+                onPressed: () {
+                  //token.updateToken(token.tokenNo + 1);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Anything()
+                  )
+                  );
+                },
                 child: Text(
                   "Check Status",
                   style: TextStyle(fontSize: 25),
@@ -149,14 +181,16 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: Text('Home',
-              style: TextStyle(
-                letterSpacing: 1.5,
-                fontFamily: 'Roboto Condensed',
-              )),
+        child: Icon(FontAwesomeIcons.moon),
+          onPressed: () {
+            setState(() {
+              _dark = !_dark;
+            });
+          },
           backgroundColor: Colors.indigo[400]),
+    ),
     );
   }
 }
