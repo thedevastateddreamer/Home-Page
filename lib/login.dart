@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
         //space for teddy actor
         Center(
           child: Container(
-              height: 300,
+              height: 100,
               width: 300,
 
               child: CircleAvatar(

@@ -7,10 +7,7 @@ import 'package:http/http.dart' as http;
 import  'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:home_page/providers/token.dart';
-
-
-
-
+import 'package:show_up_animation/show_up_animation.dart';
 class Bigdrawer extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
@@ -22,6 +19,7 @@ class MainDrawer extends State<Bigdrawer> {
   @override
   String greetings = '';
   dynamic ans;
+  bool flag=true;
   String a ='';
   Widget build(BuildContext context) {
     Token token = Provider.of<Token>(context);
@@ -93,18 +91,37 @@ class MainDrawer extends State<Bigdrawer> {
               leading: Icon(Icons.add_circle_outline),
               title: Text('Book now'),
 
-                onTap: () async{
-                  token.updateToken(token.tokenNo + 1);
+              onTap: () async{
+                if(token.tokenNo ==0)
+                {
+                  // token.updateToken(token.tokenNo + 1);
                   final response = await http.get('http://127.0.0.1:5000/'); //getting the response from our backend server script
                   final decoded = json.decode(response.body) as Map<String, dynamic>; //converting it from json to key value pair
-
-                  a = decoded.toString();
-                  print(a);
-                  setState(() {
-                   greetings = 'Your ticket has been booked!';
-                    //greetings = decoded['greetings']; //changing the state of our widget on data update
+                  a=decoded['count'];
+                  token.tokenNo=int.parse(a);
+                  Timer.periodic(new Duration(seconds: 20), (timer) async {
+                    print('Success!');
+                    if(token.tokenNo > 0){
+                      token.updateToken(token.tokenNo - 1);
+                    }
                   });
-                },
+                  setState(() {
+                    greetings = 'Your ticket has been booked!';
+                    //greetings = decoded['greetings']; //changing the state of our widget on data update
+                  }
+                  );
+                }
+                else{
+                  setState(() {
+                    if(flag)
+                    greetings = 'Already booked..check status!';
+                    else
+                    greetings = 'One user, one token..xd';
+                    flag=!flag;
+                  }
+                  );
+                }
+              },
             ),
             ListTile(
               leading: Icon(Icons.edit),
@@ -116,7 +133,7 @@ class MainDrawer extends State<Bigdrawer> {
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Auth()
                 )
                 );
-               // Navigator.push(context, MaterialPageRoute(builder: (context){
+                // Navigator.push(context, MaterialPageRoute(builder: (context){
                 //  return Bigclass();
                 //}
                 //)
@@ -127,13 +144,13 @@ class MainDrawer extends State<Bigdrawer> {
               leading: Icon(Icons.exit_to_app),
               title: Text('Sign Out'),
               onTap: () {
-                     FirebaseAuth.instance.signOut();
-                },
+                FirebaseAuth.instance.signOut();
+              },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () {
+                leading: Icon(Icons.settings),
+                title: Text('Settings'),
+                onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context){
                     return SettingsOnePage();
                   }
@@ -141,24 +158,32 @@ class MainDrawer extends State<Bigdrawer> {
                   );
                 }
             ),
-            ListTile(
-              leading: Icon(Icons.check_circle_outline),
-              title: Text(greetings),
-              onTap: () {
-              },
+            ShowUpAnimation(
+              delayStart: Duration(seconds: 1),
+              animationDuration: Duration(seconds: 1),
+              curve: Curves.bounceIn,
+              direction: Direction.vertical,
+              offset: 0.5,
+              child: ListTile(
+                  leading: Icon(Icons.check_circle_outline),
+                  title: Text(greetings),
+                  focusColor: Colors.green,
+                  onTap: () {
+                  },
+                )
             ),
-            ListTile(
-              leading: Icon(Icons.add_alert),
-              title: Text('Add more people in the Queue?'),
-              onTap: () async{
-                Timer.periodic(new Duration(seconds: 10), (timer) async {
-                  print('Success!');
-                  if(token.tokenNo > 0){
-                    token.updateToken(token.tokenNo - 1);
-                  }
-                });
-              },
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.add_alert),
+            //   title: Text('Add more people in the Queue?'),
+            //   onTap: () async{
+            //     Timer.periodic(new Duration(seconds: 10), (timer) async {
+            //       print('Success!');
+            //       if(token.tokenNo > 0){
+            //         token.updateToken(token.tokenNo - 1);
+            //       }
+            //     });
+            //   },
+            // ),
           ],
         ));
   }
